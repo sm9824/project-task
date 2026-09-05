@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - PROJECT TASK</title>
+
+<style>
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(135deg,#0f172a,#2563eb);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:420px;
+background:white;
+border-radius:18px;
+padding:30px 25px;
+box-shadow:0 10px 35px rgba(0,0,0,.25);
+}
+
+.logo{
+text-align:center;
+font-size:28px;
+font-weight:bold;
+color:#2563eb;
+margin-bottom:8px;
+}
+
+.subtitle{
+text-align:center;
+color:#666;
+margin-bottom:25px;
+}
+
+label{
+display:block;
+margin-bottom:7px;
+font-weight:bold;
+color:#333;
+}
+
+input{
+width:100%;
+padding:13px;
+border:1px solid #ddd;
+border-radius:10px;
+margin-bottom:17px;
+font-size:15px;
+outline:none;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:disabled{
+background:#999;
+}
+
+.message{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+
+.register{
+text-align:center;
+margin-top:20px;
+color:#666;
+}
+
+.register a{
+color:#2563eb;
+text-decoration:none;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">PROJECT TASK</div>
+
+<div class="subtitle">Login to your account</div>
+
+<form id="loginForm">
+
+<label>Email</label>
+<input
+type="email"
+id="email"
+placeholder="Enter your email"
+required
+>
+
+<label>Password</label>
+<input
+type="password"
+id="password"
+placeholder="Enter your password"
+required
+>
+
+<button type="submit" id="loginBtn">
+Login
+</button>
+
+<div class="message" id="message"></div>
+
+</form>
+
+<div class="register">
+Don't have an account?
+<a href="register.html">Register</a>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+authDomain: "project-task-79e5b.firebaseapp.com",
+projectId: "project-task-79e5b",
+storageBucket: "project-task-79e5b.firebasestorage.app",
+messagingSenderId: "5023785342",
+appId: "1:5023785342:web:570310574c26d18dec532f",
+measurementId: "G-77ZCVG3M0L"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const form = document.getElementById("loginForm");
+const message = document.getElementById("message");
+const button = document.getElementById("loginBtn");
+
+form.addEventListener("submit", async (e) => {
+
+e.preventDefault();
+
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value;
+
+button.disabled = true;
+button.textContent = "Logging in...";
+message.textContent = "";
+
+try {
+
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+message.style.color = "green";
+message.textContent = "Login successful!";
+
+setTimeout(() => {
+window.location.href = "index.html";
+}, 1000);
+
+} catch(error) {
+
+message.style.color = "red";
+
+if(error.code === "auth/invalid-credential"){
+message.textContent = "Email or password is incorrect.";
+}
+else if(error.code === "auth/invalid-email"){
+message.textContent = "Invalid email address.";
+}
+else{
+message.textContent = "Login failed: " + error.message;
+}
+
+}
+
+button.disabled = false;
+button.textContent = "Login";
+
+});
+
+</script>
+
+</body>
+</html>
