@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PROJECT TASK - License</title><style>
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(135deg,#0f172a,#2563eb);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.license{
+width:100%;
+max-width:500px;
+background:white;
+border-radius:22px;
+padding:25px;
+box-shadow:0 12px 35px rgba(0,0,0,.3);
+border:6px solid #2563eb;
+}
+
+.header{
+text-align:center;
+border-bottom:2px solid #2563eb;
+padding-bottom:15px;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#2563eb;
+}
+
+.subtitle{
+font-size:14px;
+color:#555;
+margin-top:5px;
+letter-spacing:2px;
+}
+
+.badge{
+text-align:center;
+font-size:55px;
+margin:20px 0 10px;
+}
+
+.license-title{
+text-align:center;
+font-size:24px;
+font-weight:bold;
+color:#222;
+letter-spacing:3px;
+}
+
+.info{
+margin-top:25px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:12px 5px;
+border-bottom:1px solid #ddd;
+gap:15px;
+}
+
+.label{
+font-weight:bold;
+color:#555;
+}
+
+.value{
+font-weight:bold;
+color:#222;
+text-align:right;
+}
+
+.notice{
+margin-top:20px;
+padding:12px;
+background:#f1f5f9;
+border-radius:10px;
+text-align:center;
+font-size:12px;
+color:#555;
+}
+
+.footer{
+margin-top:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.seal{
+width:70px;
+height:70px;
+border:3px solid #2563eb;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+font-size:10px;
+font-weight:bold;
+color:#2563eb;
+}
+
+.signature{
+text-align:center;
+font-size:12px;
+color:#555;
+}
+
+.back{
+display:block;
+margin:20px auto 0;
+padding:12px 25px;
+border:0;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-weight:bold;
+cursor:pointer;
+text-decoration:none;
+text-align:center;
+}
+</style></head><body><div class="license"><div class="header">
+<div class="logo">PROJECT TASK</div>
+<div class="subtitle">MEMBER PROGRAM</div>
+</div><div class="badge">🪪</div><div class="license-title">
+MEMBER LICENSE
+</div><div class="info"><div class="row">
+<div class="label">Member Name</div>
+<div class="value" id="memberName">Member</div>
+</div><div class="row">
+<div class="label">License No.</div>
+<div class="value" id="licenseNo">PT-000001</div>
+</div><div class="row">
+<div class="label">Established</div>
+<div class="value">2015</div>
+</div><div class="row">
+<div class="label">Status</div>
+<div class="value">ACTIVE</div>
+</div><div class="row">
+<div class="label">Valid For</div>
+<div class="value">PROJECT TASK</div>
+</div></div><div class="notice">
+This is a PROJECT TASK member identification card.
+</div><div class="footer"><div class="seal">
+PROJECT<br>TASK
+</div><div class="signature">
+AUTHORIZED<br>MEMBER SERVICE
+</div></div><a class="back" href="dashboard.html">
+BACK TO DASHBOARD
+</a></div><script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+authDomain: "project-task-79e5b.firebaseapp.com",
+projectId: "project-task-79e5b",
+storageBucket: "project-task-79e5b.firebasestorage.app",
+messagingSenderId: "5023785342",
+appId: "1:5023785342:web:570310574c26d18dec532f",
+measurementId: "G-77ZCVG3M0L"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+window.location.href="login.html";
+return;
+}
+
+document.getElementById("memberName").textContent =
+user.email;
+
+});
+
+</script></body>
+</html>
