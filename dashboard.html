@@ -1,60 +1,127 @@
 <!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - PROJECT TASK</title><style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PROJECT TASK Dashboard</title><style>
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
 
 body{
 min-height:100vh;
 background:linear-gradient(135deg,#0f172a,#2563eb);
+padding:25px 15px;
+}
+
+.header{
+text-align:center;
+color:white;
+font-size:30px;
+font-weight:bold;
+margin-bottom:25px;
+}
+
+.dashboard{
+max-width:600px;
+margin:auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+.card{
+background:white;
+border-radius:20px;
+min-height:155px;
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
-padding:20px
+text-align:center;
+box-shadow:0 8px 25px rgba(0,0,0,.20);
+cursor:pointer;
+transition:.2s;
+text-decoration:none;
+color:#222;
 }
 
-.container{
-width:100%;
-max-width:500px;
-background:white;
-border-radius:18px;
-padding:30px 25px;
-box-shadow:0 10px 35px rgba(0,0,0,.25);
-text-align:center
+.card:active{
+transform:scale(.96);
 }
 
-.logo{
-font-size:28px;
+.icon{
+font-size:50px;
+margin-bottom:12px;
+}
+
+.title{
+font-size:19px;
 font-weight:bold;
-color:#2563eb;
-margin-bottom:20px
 }
 
-h2{
-margin-bottom:10px;
-color:#222
+.commission{
+grid-column:span 1;
 }
 
-p{
-color:#666;
-margin-bottom:10px
+.today{
+grid-column:span 1;
 }
 
-button{
-margin-top:20px;
-padding:13px 25px;
-border:none;
-border-radius:10px;
+.logout{
+display:block;
+width:100%;
+max-width:600px;
+margin:20px auto 0;
+padding:14px;
+border:0;
+border-radius:12px;
 background:#dc2626;
 color:white;
 font-size:16px;
 font-weight:bold;
-cursor:pointer
+cursor:pointer;
 }
-</style></head><body><div class="container"><div class="logo">PROJECT TASK</div><h2>Welcome to your Dashboard</h2><p id="email">Loading...</p><button id="logoutBtn">Logout</button>
 
-</div><script type="module">
+@media(max-width:420px){
+
+.card{
+min-height:145px;
+}
+
+.icon{
+font-size:44px;
+}
+
+.title{
+font-size:17px;
+}
+
+}
+</style></head><body><div class="header">
+PROJECT TASK
+</div><div class="dashboard"><a class="card" href="#">
+<div class="icon">📦</div>
+<div class="title">PACKAGE</div>
+</a><a class="card" href="#">
+<div class="icon">📋</div>
+<div class="title">TASK</div>
+</a><a class="card" href="#">
+<div class="icon">💳</div>
+<div class="title">PAYMENT</div>
+</a><a class="card" href="#">
+<div class="icon">👥</div>
+<div class="title">REFERRAL</div>
+</a><a class="card commission" href="#">
+<div class="icon">💰</div>
+<div class="title">COMMISSION<br>INCOME</div>
+</a><a class="card today" href="#">
+<div class="icon">💵</div>
+<div class="title">TODAY'S<br>INCOME</div>
+</a></div><button class="logout" id="logoutBtn">
+Logout
+</button><script type="module">
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -79,23 +146,19 @@ measurementId: "G-77ZCVG3M0L"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-const email = document.getElementById("email");
+onAuthStateChanged(auth,(user)=>{
 
-onAuthStateChanged(auth, (user) => {
-
-if(user){
-email.textContent = "Logged in as: " + user.email;
-}else{
-window.location.href = "login.html";
+if(!user){
+window.location.href="login.html";
 }
 
 });
 
-document.getElementById("logoutBtn").addEventListener("click", async () => {
+document.getElementById("logoutBtn").addEventListener("click",async()=>{
 
 await signOut(auth);
 
-window.location.href = "login.html";
+window.location.href="login.html";
 
 });
 
