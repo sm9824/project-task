@@ -7,6 +7,7 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+
 body{
 min-height:100vh;
 background:linear-gradient(135deg,#0f172a,#2563eb);
@@ -15,6 +16,7 @@ align-items:center;
 justify-content:center;
 padding:20px
 }
+
 .container{
 width:100%;
 max-width:420px;
@@ -23,9 +25,28 @@ border-radius:18px;
 padding:30px 25px;
 box-shadow:0 10px 35px rgba(0,0,0,.25)
 }
-.logo{text-align:center;font-size:28px;font-weight:bold;color:#2563eb;margin-bottom:8px}
-.subtitle{text-align:center;color:#666;margin-bottom:25px}
-label{display:block;margin-bottom:7px;font-weight:bold;color:#333}
+
+.logo{
+text-align:center;
+font-size:28px;
+font-weight:bold;
+color:#2563eb;
+margin-bottom:8px
+}
+
+.subtitle{
+text-align:center;
+color:#666;
+margin-bottom:25px
+}
+
+label{
+display:block;
+margin-bottom:7px;
+font-weight:bold;
+color:#333
+}
+
 input{
 width:100%;
 padding:13px;
@@ -35,7 +56,11 @@ margin-bottom:17px;
 font-size:15px;
 outline:none
 }
-input:focus{border-color:#2563eb}
+
+input:focus{
+border-color:#2563eb
+}
+
 button{
 width:100%;
 padding:14px;
@@ -47,10 +72,28 @@ font-size:16px;
 font-weight:bold;
 cursor:pointer
 }
-button:disabled{background:#999}
-.login{text-align:center;margin-top:20px;color:#666}
-.login a{color:#2563eb;text-decoration:none;font-weight:bold}
-.message{margin-top:15px;text-align:center;font-weight:bold}
+
+button:disabled{
+background:#999
+}
+
+.login{
+text-align:center;
+margin-top:20px;
+color:#666
+}
+
+.login a{
+color:#2563eb;
+text-decoration:none;
+font-weight:bold
+}
+
+.message{
+margin-top:15px;
+text-align:center;
+font-weight:bold
+}
 </style>
 </head>
 
@@ -59,29 +102,57 @@ button:disabled{background:#999}
 <div class="container">
 
 <div class="logo">PROJECT TASK</div>
+
 <div class="subtitle">Create your account</div>
 
 <form id="registerForm">
 
 <label>Full Name</label>
-<input type="text" id="name" placeholder="Enter your name" required>
+<input
+type="text"
+id="name"
+placeholder="Enter your name"
+required
+>
 
 <label>Mobile Number</label>
-<input type="tel" id="mobile" placeholder="01XXXXXXXXX"
-pattern="01[0-9]{9}" required>
+<input
+type="tel"
+id="mobile"
+placeholder="01XXXXXXXXX"
+pattern="01[0-9]{9}"
+required
+>
 
 <label>Email</label>
-<input type="email" id="email" placeholder="Enter your email" required>
+<input
+type="email"
+id="email"
+placeholder="Enter your email"
+required
+>
 
 <label>Password</label>
-<input type="password" id="password"
-placeholder="Create a password" minlength="6" required>
+<input
+type="password"
+id="password"
+placeholder="Create a password"
+minlength="6"
+required
+>
 
 <label>Confirm Password</label>
-<input type="password" id="confirmPassword"
-placeholder="Confirm your password" minlength="6" required>
+<input
+type="password"
+id="confirmPassword"
+placeholder="Confirm your password"
+minlength="6"
+required
+>
 
-<button type="submit" id="createBtn">Create Account</button>
+<button type="submit" id="createBtn">
+Create Account
+</button>
 
 <div class="message" id="message"></div>
 
@@ -94,100 +165,349 @@ Already have an account?
 
 </div>
 
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
 getAuth,
 createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
 getFirestore,
 doc,
-setDoc
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+setDoc,
+getDoc,
+collection,
+writeBatch
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 const firebaseConfig = {
-apiKey: "AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
-authDomain: "project-task-79e5b.firebaseapp.com",
-projectId: "project-task-79e5b",
-storageBucket: "project-task-79e5b.firebasestorage.app",
-messagingSenderId: "5023785342",
-appId: "1:5023785342:web:570310574c26d18dec532f",
-measurementId: "G-77ZCVG3M0L"
+
+apiKey:
+"AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+
+authDomain:
+"project-task-79e5b.firebaseapp.com",
+
+projectId:
+"project-task-79e5b",
+
+storageBucket:
+"project-task-79e5b.firebasestorage.app",
+
+messagingSenderId:
+"5023785342",
+
+appId:
+"1:5023785342:web:570310574c26d18dec532f",
+
+measurementId:
+"G-77ZCVG3M0L"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
-const form = document.getElementById("registerForm");
-const message = document.getElementById("message");
-const button = document.getElementById("createBtn");
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
+
+
+const form =
+document.getElementById("registerForm");
+
+const message =
+document.getElementById("message");
+
+const button =
+document.getElementById("createBtn");
+
+
+/* Referral Code নেওয়া */
+
+const params =
+new URLSearchParams(window.location.search);
+
+const urlReferralCode =
+params.get("ref");
+
+if(urlReferralCode){
+
+sessionStorage.setItem(
+"referralCode",
+urlReferralCode.trim().toUpperCase()
+);
+
+}
+
+const referralCode =
+(
+urlReferralCode ||
+sessionStorage.getItem("referralCode") ||
+""
+).trim().toUpperCase();
+
+
+/* Register */
 
 form.addEventListener("submit", async (e) => {
 
 e.preventDefault();
 
-const name = document.getElementById("name").value.trim();
-const mobile = document.getElementById("mobile").value.trim();
-const email = document.getElementById("email").value.trim();
-const password = document.getElementById("password").value;
-const confirmPassword = document.getElementById("confirmPassword").value;
+
+const name =
+document.getElementById("name").value.trim();
+
+const mobile =
+document.getElementById("mobile").value.trim();
+
+const email =
+document.getElementById("email").value.trim();
+
+const password =
+document.getElementById("password").value;
+
+const confirmPassword =
+document.getElementById("confirmPassword").value;
+
 
 if(password !== confirmPassword){
+
 message.style.color = "red";
-message.textContent = "Passwords do not match.";
+
+message.textContent =
+"Passwords do not match.";
+
 return;
+
 }
 
+
 button.disabled = true;
-button.textContent = "Creating Account...";
+
+button.textContent =
+"Creating Account...";
+
 message.textContent = "";
 
-try {
+
+try{
+
+/*
+প্রথমে Referral Code থাকলে
+Referrer খুঁজে বের করা
+*/
+
+let referrerUid = null;
+
+let validReferralCode = null;
+
+
+if(referralCode){
+
+const referralCodeDoc =
+await getDoc(
+doc(db,"referralCodes",referralCode)
+);
+
+
+if(referralCodeDoc.exists()){
+
+referrerUid =
+referralCodeDoc.data().uid;
+
+validReferralCode =
+referralCode;
+
+}
+
+}
+
+
+/* Firebase Account তৈরি */
 
 const userCredential =
-await createUserWithEmailAndPassword(auth,email,password);
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
 
-const user = userCredential.user;
+const user =
+userCredential.user;
 
-await setDoc(doc(db,"users",user.uid),{
-name: name,
-mobile: mobile,
-email: email,
-createdAt: new Date().toISOString()
-});
+
+/*
+নতুন User-এর জন্য স্থায়ী Referral Code
+*/
+
+const newReferralCode =
+"REF" +
+crypto.randomUUID()
+.replace(/-/g,"")
+.substring(0,8)
+.toUpperCase();
+
+
+/*
+Firestore Batch
+*/
+
+const batch =
+writeBatch(db);
+
+
+/* User document */
+
+batch.set(
+doc(db,"users",user.uid),
+{
+
+name:name,
+
+mobile:mobile,
+
+email:email,
+
+createdAt:
+new Date().toISOString(),
+
+referralCode:
+newReferralCode,
+
+referredByCode:
+validReferralCode || null,
+
+referredByUid:
+referrerUid || null
+
+}
+);
+
+
+/* Referral Code Mapping */
+
+batch.set(
+doc(db,"referralCodes",newReferralCode),
+{
+
+uid:user.uid
+
+}
+);
+
+
+/*
+যদি Referral দিয়ে এসে থাকে
+তাহলে Referral Record তৈরি হবে
+*/
+
+if(referrerUid){
+
+const referralRef =
+doc(collection(db,"referrals"));
+
+batch.set(
+referralRef,
+{
+
+referrerUid:
+referrerUid,
+
+referrerCode:
+validReferralCode,
+
+referredUid:
+user.uid,
+
+referredEmail:
+email,
+
+status:
+"pending",
+
+createdAt:
+new Date().toISOString()
+
+}
+);
+
+}
+
+
+/* সব একসাথে Save */
+
+await batch.commit();
+
+
+/* Referral তথ্য পরিষ্কার */
+
+sessionStorage.removeItem(
+"referralCode"
+);
+
 
 message.style.color = "green";
-message.textContent = "Account created successfully!";
+
+message.textContent =
+"Account created successfully!";
+
 
 form.reset();
 
-} catch(error) {
+
+}catch(error){
 
 message.style.color = "red";
 
+
 if(error.code === "auth/email-already-in-use"){
-message.textContent = "This email is already registered.";
+
+message.textContent =
+"This email is already registered.";
+
 }
+
 else if(error.code === "auth/invalid-email"){
-message.textContent = "Invalid email address.";
+
+message.textContent =
+"Invalid email address.";
+
 }
+
 else if(error.code === "auth/weak-password"){
-message.textContent = "Password must be at least 6 characters.";
+
+message.textContent =
+"Password must be at least 6 characters.";
+
 }
+
 else{
-message.textContent = "Registration failed: " + error.message;
+
+message.textContent =
+"Registration failed: " +
+error.message;
+
 }
 
 }
+
 
 button.disabled = false;
-button.textContent = "Create Account";
+
+button.textContent =
+"Create Account";
 
 });
 
