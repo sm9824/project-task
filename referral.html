@@ -141,6 +141,25 @@ line-height:1.6;
 font-size:14px;
 }
 
+.history-item{
+padding:12px 0;
+border-bottom:1px solid #eee;
+}
+
+.history-item:last-child{
+border-bottom:0;
+}
+
+.status-pending{
+color:#d97706;
+font-weight:bold;
+}
+
+.status-successful{
+color:#16a34a;
+font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -152,6 +171,7 @@ font-size:14px;
 <h2>🎁 Referral Center</h2>
 <div>বন্ধুকে রেফার করুন এবং বোনাস উপার্জন করুন</div>
 </div>
+
 
 <div class="card">
 
@@ -165,6 +185,7 @@ Referral Bonus Balance
 
 </div>
 
+
 <div class="card">
 
 <div class="title">
@@ -172,7 +193,7 @@ Referral Bonus Balance
 </div>
 
 <div class="refcode" id="refCode">
-REF123456
+লোড হচ্ছে...
 </div>
 
 <button class="copy" onclick="copyCode()">
@@ -182,7 +203,8 @@ REF123456
 <button class="share" onclick="shareReferral()">
 📤 Invite / Share
 </button>
-    <div id="refLink"
+
+<div id="refLink"
 style="margin-top:15px;
 background:#f1f5f9;
 padding:12px;
@@ -190,9 +212,10 @@ border-radius:10px;
 font-size:13px;
 word-break:break-all;">
 লিংক তৈরি হচ্ছে...
-    </div>
+</div>
 
 </div>
+
 
 <div class="card">
 
@@ -227,6 +250,7 @@ word-break:break-all;">
 
 </div>
 
+
 <div class="card">
 
 <div class="title">
@@ -259,6 +283,7 @@ Pending
 
 </div>
 
+
 <div class="card">
 
 <div class="title">
@@ -289,6 +314,7 @@ Pending
 
 </div>
 
+
 <div class="card">
 
 <div class="title">
@@ -298,7 +324,7 @@ Pending
 <div id="history">
 
 <div style="text-align:center;color:#777;padding:15px">
-এখনো কোনো Referral নেই
+লোড হচ্ছে...
 </div>
 
 </div>
@@ -307,75 +333,253 @@ Pending
 
 </div>
 
-<script>
 
-function generateReferralCode(){
-    let code = Math.random()
-        .toString(36)
-        .substring(2,8)
-        .toUpperCase();
+<script type="module">
 
-return "REF" + code;
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged
 }
-    let referralCode = generateReferralCode();
-    
-document.getElementById("refCode").innerText = referralCode;
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+collection,
+query,
+where,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+
+authDomain:
+"project-task-79e5b.firebaseapp.com",
+
+projectId:
+"project-task-79e5b",
+
+storageBucket:
+"project-task-79e5b.firebasestorage.app",
+
+messagingSenderId:
+"5023785342",
+
+appId:
+"1:5023785342:web:570310574c26d18dec532f",
+
+measurementId:
+"G-77ZCVG3M0L"
+
+};
+
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
+
+
+let referralCode = "";
 
 let successful = 0;
 
 let pending = 0;
 
-let balance = 0;
+
+/* User Login Check */
+
+onAuthStateChanged(auth, async (user) => {
+
+if(!user){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+try{
+
+
+/* নিজের User Data */
+
+const userDoc =
+await getDoc(
+doc(db,"users",user.uid)
+);
+
+
+if(!userDoc.exists()){
+
+document.getElementById("refCode").innerText =
+"Referral Code পাওয়া যায়নি";
+
+return;
+
+}
+
+
+const userData =
+userDoc.data();
+
+
+referralCode =
+userData.referralCode;
+
+
+/* Referral Code দেখানো */
 
 document.getElementById("refCode").innerText =
 referralCode;
 
 
-function copyCode(){
-
-navigator.clipboard.writeText(referralCode);
-
-alert("Referral Code কপি হয়েছে!");
-
-}
-
-
-function shareReferral(){
-    document.getElementById("refLink").innerText = window.location.origin + window.location.pathname + "?ref=" + referralCode;
+/* Referral Link */
 
 const link =
 window.location.origin +
 "/project-task/login.html?ref=" +
-referralCode;
+encodeURIComponent(referralCode);
 
-const text =
-"আমার Referral Link দিয়ে Join করুন:\n" +
+
+document.getElementById("refLink").innerText =
 link;
 
-if(navigator.share){
 
-navigator.share({
+/* নিজের Referral Records */
 
-title:"Referral Invite",
+const referralQuery =
+query(
+collection(db,"referrals"),
+where("referrerUid","==",user.uid)
+);
 
-text:text,
 
-url:link
+const snapshot =
+await getDocs(referralQuery);
 
-});
+
+successful = 0;
+
+pending = 0;
+
+
+const history =
+document.getElementById("history");
+
+
+history.innerHTML = "";
+
+
+if(snapshot.empty){
+
+history.innerHTML =
+'<div style="text-align:center;color:#777;padding:15px">' +
+'এখনো কোনো Referral নেই' +
+'</div>';
+
+}
+
+
+/* History */
+
+snapshot.forEach((item) => {
+
+const data =
+item.data();
+
+
+if(data.status === "successful"){
+
+successful++;
 
 }else{
 
-navigator.clipboard.writeText(link);
-
-alert("Referral Link কপি হয়েছে!");
-
-}
+pending++;
 
 }
 
 
-function updateReferral(){
+const div =
+document.createElement("div");
+
+div.className =
+"history-item";
+
+
+let statusText =
+"Pending";
+
+let statusClass =
+"status-pending";
+
+
+if(data.status === "successful"){
+
+statusText =
+"Successful";
+
+statusClass =
+"status-successful";
+
+}
+
+
+div.innerHTML =
+
+"<div>" +
+"👤 " +
+(data.referredEmail || "New User") +
+"</div>" +
+
+"<div style='margin-top:5px'>" +
+"<span class='" +
+statusClass +
+"'>" +
+statusText +
+"</span>" +
+"</div>";
+
+
+history.appendChild(div);
+
+});
+
+
+/* Balance */
+
+let balance =
+successful * 1000;
+
+
+/*
+২০টি Successful Referral হলে
+৳৪০,০০০ Milestone Bonus
+*/
+
+if(successful >= 20){
+
+balance += 40000;
+
+}
+
+
+/* Screen Update */
 
 document.getElementById("successful").innerText =
 successful;
@@ -386,20 +590,112 @@ pending;
 document.getElementById("balance").innerText =
 balance.toLocaleString("bn-BD");
 
-let percent =
-Math.min((successful / 20) * 100,100);
+
+const percent =
+Math.min(
+(successful / 20) * 100,
+100
+);
+
 
 document.getElementById("progress").style.width =
 percent + "%";
 
+
 document.getElementById("progressText").innerText =
 successful + " / 20";
 
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById("history").innerHTML =
+'<div style="text-align:center;color:red;padding:15px">' +
+'Referral data load করা যায়নি' +
+'</div>';
+
 }
 
-updateReferral();
+});
+
+
+/* Copy Code */
+
+window.copyCode = function(){
+
+if(!referralCode){
+
+alert("Referral Code এখনো লোড হয়নি!");
+
+return;
+
+}
+
+
+navigator.clipboard.writeText(
+referralCode
+);
+
+alert(
+"Referral Code কপি হয়েছে!"
+);
+
+};
+
+
+/* Share */
+
+window.shareReferral = function(){
+
+if(!referralCode){
+
+alert("Referral Code এখনো লোড হয়নি!");
+
+return;
+
+}
+
+
+const link =
+window.location.origin +
+"/project-task/login.html?ref=" +
+encodeURIComponent(referralCode);
+
+
+const text =
+"আমার Referral Link দিয়ে Join করুন:\n" +
+link;
+
+
+if(navigator.share){
+
+navigator.share({
+
+title:
+"PROJECT TASK Referral",
+
+text:
+text,
+
+url:
+link
+
+});
+
+}else{
+
+navigator.clipboard.writeText(link);
+
+alert(
+"Referral Link কপি হয়েছে!"
+);
+
+}
+
+};
 
 </script>
 
 </body>
-</html>
+    </html>
