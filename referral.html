@@ -300,7 +300,16 @@ Pending
 
 <script>
 
-let referralCode = "REF123456";
+function generateReferralCode(){
+    let code = Math.random()
+        .toString(36)
+        .substring(2,8)
+        .toUpperCase();
+
+    return "REF" + code;
+}
+
+let referralCode = generateReferralCode();
 
 let successful = 0;
 
