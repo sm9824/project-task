@@ -112,6 +112,13 @@ margin-top:40px;
 
 <a class="btn" href="register.html" id="getStarted">Get Started</a>
 
+<script>
+const ref = new URLSearchParams(window.location.search).get("ref");
+if (ref) {
+    document.getElementById("getStarted").href = "register.html?ref=" + ref;
+}
+</script>
+
 </div>
 
 <section>
