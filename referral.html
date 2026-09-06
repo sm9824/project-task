@@ -306,10 +306,11 @@ function generateReferralCode(){
         .substring(2,8)
         .toUpperCase();
 
-    return "REF" + code;
+return "REF" + code;
 }
-
-let referralCode = generateReferralCode();
+    let referralCode = generateReferralCode();
+    document.getElementById("refCode").innerText = referralCode;
+document.getElementById("refCode").innerText = referralCode;
 
 let successful = 0;
 
