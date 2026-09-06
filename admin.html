@@ -1,184 +1,834 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT TASK Admin</title>
+
+<title>Admin Panel - PROJECT TASK</title>
 
 <style>
 *{
-box-sizing:border-box;
-margin:0;
-padding:0;
-font-family:Arial,sans-serif;
+    box-sizing:border-box;
 }
 
 body{
-min-height:100vh;
-background:linear-gradient(135deg,#0f172a,#2563eb);
-padding:25px 15px;
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+    color:#222;
+}
+
+.container{
+    width:94%;
+    max-width:1000px;
+    margin:25px auto;
 }
 
 .header{
-text-align:center;
-color:white;
-font-size:30px;
-font-weight:bold;
-margin-bottom:25px;
-}
-
-.admin-box{
-max-width:600px;
-margin:auto;
-background:white;
-border-radius:20px;
-padding:25px;
-box-shadow:0 8px 25px rgba(0,0,0,.20);
-}
-
-h2{
-text-align:center;
-margin-bottom:20px;
-}
-
-.info{
-background:#f1f5f9;
-padding:15px;
-border-radius:12px;
-margin-bottom:15px;
-}
-
-.label{
-font-size:13px;
-color:#64748b;
-margin-bottom:5px;
-}
-
-.value{
-font-weight:bold;
-word-break:break-all;
+    background:#111827;
+    color:white;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
 }
 
 .card{
-padding:18px;
-border:1px solid #e2e8f0;
-border-radius:15px;
-margin-top:12px;
-font-size:18px;
-font-weight:bold;
+    background:white;
+    margin-top:18px;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.section-title{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.item{
+    border:1px solid #ddd;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:12px;
+}
+
+button{
+    border:0;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    margin:4px;
+}
+
+.approve{
+    background:#16a34a;
+    color:white;
+}
+
+.reject{
+    background:#dc2626;
+    color:white;
+}
+
+.refresh{
+    background:#111827;
+    color:white;
 }
 
 .logout{
-display:block;
-width:100%;
-margin-top:20px;
-padding:14px;
-border:0;
-border-radius:12px;
-background:#dc2626;
-color:white;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
+    width:100%;
+    background:#dc2626;
+    color:white;
+    margin-top:18px;
+    padding:14px;
+}
+
+.status{
+    font-weight:bold;
+    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-PROJECT TASK
+<div class="container">
+
+    <div class="header">
+
+        <h1>PROJECT TASK</h1>
+
+        <h2>🛠️ ADMIN PANEL</h2>
+
+        <p>
+            Admin: sornaakther65487@gmail.com
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-title">
+            👤 USER MANAGEMENT
+        </div>
+
+        <button
+            class="refresh"
+            onclick="loadUsers()">
+            🔄 Load Users
+        </button>
+
+        <div id="users">
+            Users লোড করা হয়নি।
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-title">
+            💳 PAYMENT MANAGEMENT
+        </div>
+
+        <button
+            class="refresh"
+            onclick="loadPayments()">
+            🔄 Refresh Payments
+        </button>
+
+        <div id="payments">
+            Payment লোড করা হয়নি।
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-title">
+            📦 PACKAGE MANAGEMENT
+        </div>
+
+        <div id="packageInfo">
+            Payment Approve হলে User-এর Package Active হবে।
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="section-title">
+            💰 COMMISSION / INCOME
+        </div>
+
+        <div id="commissionInfo">
+            Referral সফল হলে প্রতি Referral ৳১,০০০ হিসাবে গণনা হবে।
+        </div>
+
+    </div>
+
+
+    <button
+        class="logout"
+        onclick="logout()">
+        Logout
+    </button>
+
 </div>
 
-<div class="admin-box">
-
-<h2>🛠️ ADMIN PANEL</h2>
-
-<div class="info">
-<div class="label">Admin Email</div>
-<div class="value" id="adminEmail">Checking...</div>
-</div>
-
-<div class="info">
-<div class="label">Firebase UID</div>
-<div class="value" id="adminUID">Checking...</div>
-</div>
-
-<div class="card">
-👤 USER MANAGEMENT
-</div>
-
-<div class="card">
-📦 PACKAGE MANAGEMENT
-</div>
-
-<div class="card">
-📋 TASK MANAGEMENT
-</div>
-
-<div class="card">
-💰 COMMISSION / INCOME
-</div>
-
-<button class="logout" id="logoutBtn">
-Logout
-</button>
-
-</div>
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
-getAuth,
-onAuthStateChanged,
-signOut
-}
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-  import {
-getFirestore,
-doc,
-setDoc
-}
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    query,
+    where,
+    doc,
+    updateDoc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
-apiKey: "AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
-authDomain: "project-task-79e5b.firebaseapp.com",
-projectId: "project-task-79e5b",
-storageBucket: "project-task-79e5b.firebasestorage.app",
-messagingSenderId: "5023785342",
-appId: "1:5023785342:web:570310574c26d18dec532f",
-measurementId: "G-77ZCVG3M0L"
+
+    apiKey:"AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+
+    authDomain:"project-task-79e5b.firebaseapp.com",
+
+    projectId:"project-task-79e5b",
+
+    storageBucket:"project-task-79e5b.firebasestorage.app",
+
+    messagingSenderId:"5023785342",
+
+    appId:"1:5023785342:web:570310574c26d18dec532f",
+
+    measurementId:"G-77ZCVG3M0L"
+
 };
 
+
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 
-onAuthStateChanged(auth,(user)=>{
+const db = getFirestore(app);
 
-if(!user){
-window.location.href="login.html";
-return;
+
+const ADMIN_UID =
+    "rStuZrjfaldakw6C9JLn6Cibdzz1";
+
+
+let currentAdmin = null;
+
+
+/* =====================================
+   AUTH
+===================================== */
+
+onAuthStateChanged(auth, async user => {
+
+    if(!user){
+
+        window.location.href="login.html";
+
+        return;
+
+    }
+
+
+    if(user.uid !== ADMIN_UID){
+
+        alert("❌ Admin access denied.");
+
+        await signOut(auth);
+
+        window.location.href="login.html";
+
+        return;
+
+    }
+
+
+    currentAdmin = user;
+
+    await loadPayments();
+
+});
+
+
+/* =====================================
+   LOAD USERS
+===================================== */
+
+window.loadUsers = async function(){
+
+    const container =
+        document.getElementById("users");
+
+
+    container.innerHTML =
+        "⏳ Users লোড হচ্ছে...";
+
+
+    try{
+
+        const snapshot =
+            await getDocs(
+                collection(db,"users")
+            );
+
+
+        if(snapshot.empty){
+
+            container.innerHTML =
+                "কোনো User পাওয়া যায়নি।";
+
+            return;
+
+        }
+
+
+        container.innerHTML="";
+
+
+        snapshot.forEach(item => {
+
+            const data =
+                item.data();
+
+
+            const div =
+                document.createElement("div");
+
+
+            div.className="item";
+
+
+            div.innerHTML = `
+
+                <strong>
+                    ${escapeHtml(data.name || "No Name")}
+                </strong>
+
+                <br>
+
+                Email:
+                ${escapeHtml(data.email || "")}
+
+                <br>
+
+                Mobile:
+                ${escapeHtml(data.mobile || "")}
+
+                <br>
+
+                Referral Code:
+                ${escapeHtml(data.referralCode || "None")}
+
+                <br>
+
+                Package:
+                ${escapeHtml(data.packageStatus || "inactive")}
+
+            `;
+
+
+            container.appendChild(div);
+
+        });
+
+
+    }catch(error){
+
+        console.error(error);
+
+        container.innerHTML =
+            "❌ Users লোড করা যায়নি: " +
+            error.message;
+
+    }
+
+};
+
+
+/* =====================================
+   LOAD PAYMENTS
+===================================== */
+
+window.loadPayments = async function(){
+
+    const container =
+        document.getElementById("payments");
+
+
+    container.innerHTML =
+        "⏳ Payments লোড হচ্ছে...";
+
+
+    try{
+
+        const snapshot =
+            await getDocs(
+                collection(db,"payments")
+            );
+
+
+        if(snapshot.empty){
+
+            container.innerHTML =
+                "কোনো Payment পাওয়া যায়নি।";
+
+            return;
+
+        }
+
+
+        container.innerHTML="";
+
+
+        snapshot.forEach(item => {
+
+            const data =
+                item.data();
+
+
+            const div =
+                document.createElement("div");
+
+
+            div.className="item";
+
+
+            let buttons="";
+
+
+            if(data.status === "pending"){
+
+                buttons = `
+
+                    <button
+                        class="approve"
+                        onclick="approvePayment('${item.id}')">
+                        ✅ Approve
+                    </button>
+
+                    <button
+                        class="reject"
+                        onclick="rejectPayment('${item.id}')">
+                        ❌ Reject
+                    </button>
+
+                `;
+
+            }
+
+
+            div.innerHTML = `
+
+                <strong>
+                    Payment ID:
+                </strong>
+                ${escapeHtml(item.id)}
+
+                <br><br>
+
+                <strong>User:</strong>
+                ${escapeHtml(data.userEmail || "")}
+
+                <br>
+
+                <strong>Method:</strong>
+                ${escapeHtml(data.method || "")}
+
+                <br>
+
+                <strong>Sender:</strong>
+                ${escapeHtml(data.sender || "")}
+
+                <br>
+
+                <strong>Transaction ID:</strong>
+                ${escapeHtml(data.transactionId || "")}
+
+                <br>
+
+                <strong>Amount:</strong>
+                ৳${Number(data.amount || 0).toLocaleString("en-US")}
+
+                <br>
+
+                <strong>Status:</strong>
+                ${escapeHtml(data.status || "")}
+
+                <br>
+
+                <strong>Date:</strong>
+                ${escapeHtml(data.createdAt || "")}
+
+                <br>
+
+                ${buttons}
+
+            `;
+
+
+            container.appendChild(div);
+
+        });
+
+
+    }catch(error){
+
+        console.error(error);
+
+        container.innerHTML =
+            "❌ Payments লোড করা যায়নি: " +
+            error.message;
+
+    }
+
+};
+
+
+/* =====================================
+   APPROVE PAYMENT
+===================================== */
+
+window.approvePayment = async function(paymentId){
+
+    if(!confirm(
+        "এই Payment Approve করবেন?"
+    )){
+
+        return;
+
+    }
+
+
+    try{
+
+        const paymentRef =
+            doc(
+                db,
+                "payments",
+                paymentId
+            );
+
+
+        const paymentSnap =
+            await getDoc(paymentRef);
+
+
+        if(!paymentSnap.exists()){
+
+            alert("Payment পাওয়া যায়নি।");
+
+            return;
+
+        }
+
+
+        const payment =
+            paymentSnap.data();
+
+
+        /* Already approved */
+
+        if(payment.status === "approved"){
+
+            alert(
+                "এই Payment ইতিমধ্যে Approved।"
+            );
+
+            return;
+
+        }
+
+
+        if(payment.status !== "pending"){
+
+            alert(
+                "এই Payment Pending নয়।"
+            );
+
+            return;
+
+        }
+
+
+        const userId =
+            payment.userId;
+
+
+        if(!userId){
+
+            alert(
+                "Payment-এর User ID পাওয়া যায়নি।"
+            );
+
+            return;
+
+        }
+
+
+        /* ==========================
+           1. PAYMENT APPROVED
+        ========================== */
+
+        await updateDoc(
+
+            paymentRef,
+
+            {
+
+                status:"approved",
+
+                approvedAt:
+                    new Date().toISOString(),
+
+                approvedBy:
+                    currentAdmin.uid
+
+            }
+
+        );
+
+
+        /* ==========================
+           2. USER PACKAGE ACTIVE
+        ========================== */
+
+        const userRef =
+            doc(
+                db,
+                "users",
+                userId
+            );
+
+
+        await updateDoc(
+
+            userRef,
+
+            {
+
+                packageStatus:"active",
+
+                packagePrice:6000,
+
+                packagePurchasedAt:
+                    new Date().toISOString(),
+
+                packagePaymentId:
+                    paymentId
+
+            }
+
+        );
+
+
+        /* ==========================
+           3. FIND REFERRAL
+        ========================== */
+
+        const referralQuery =
+
+            query(
+
+                collection(db,"referrals"),
+
+                where(
+                    "referredUid",
+                    "==",
+                    userId
+                ),
+
+                where(
+                    "status",
+                    "==",
+                    "pending"
+                )
+
+            );
+
+
+        const referralSnapshot =
+            await getDocs(
+                referralQuery
+            );
+
+
+        /* ==========================
+           4. REFERRAL SUCCESSFUL
+        ========================== */
+
+        for(
+            const referralDoc
+            of referralSnapshot.docs
+        ){
+
+            await updateDoc(
+
+                referralDoc.ref,
+
+                {
+
+                    status:"successful",
+
+                    successfulAt:
+                        new Date().toISOString(),
+
+                    successfulPaymentId:
+                        paymentId
+
+                }
+
+            );
+
+        }
+
+
+        alert(
+            "✅ Payment Approved!\n\n" +
+            "Package Active হয়েছে।\n" +
+            "Referral থাকলে Successful হয়েছে।"
+        );
+
+
+        await loadPayments();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "❌ Approve করতে সমস্যা হয়েছে:\n" +
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================
+   REJECT PAYMENT
+===================================== */
+
+window.rejectPayment = async function(paymentId){
+
+    if(!confirm(
+        "এই Payment Reject করবেন?"
+    )){
+
+        return;
+
+    }
+
+
+    try{
+
+        const paymentRef =
+            doc(
+                db,
+                "payments",
+                paymentId
+            );
+
+
+        await updateDoc(
+
+            paymentRef,
+
+            {
+
+                status:"rejected",
+
+                rejectedAt:
+                    new Date().toISOString(),
+
+                rejectedBy:
+                    currentAdmin.uid
+
+            }
+
+        );
+
+
+        alert(
+            "❌ Payment Rejected হয়েছে।"
+        );
+
+
+        await loadPayments();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "❌ Reject করতে সমস্যা হয়েছে:\n" +
+            error.message
+        );
+
+    }
+
+};
+
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+window.logout = async function(){
+
+    await signOut(auth);
+
+    window.location.href =
+        "login.html";
+
+};
+
+
+/* =====================================
+   HTML SAFE TEXT
+===================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+
+        .replaceAll("&","&amp;")
+
+        .replaceAll("<","&lt;")
+
+        .replaceAll(">","&gt;")
+
+        .replaceAll('"',"&quot;")
+
+        .replaceAll("'","&#039;");
+
 }
-
-document.getElementById("adminEmail").innerText =
-user.email || "No Email";
-
-document.getElementById("adminUID").innerText =
-user.uid;
-
-});
-
-document.getElementById("logoutBtn").addEventListener("click",async()=>{
-
-await signOut(auth);
-
-window.location.href="login.html";
-
-});
 
 </script>
 
