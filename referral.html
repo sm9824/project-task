@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Referral</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f6f8;
+color:#222;
+}
+
+.container{
+max-width:480px;
+margin:auto;
+padding:18px;
+}
+
+.header{
+background:#111827;
+color:white;
+padding:22px;
+border-radius:18px;
+margin-bottom:15px;
+}
+
+.header h2{
+margin:0 0 8px;
+}
+
+.card{
+background:white;
+border-radius:16px;
+padding:18px;
+margin-bottom:15px;
+box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+
+.title{
+font-size:17px;
+font-weight:bold;
+margin-bottom:12px;
+}
+
+.refcode{
+background:#f1f5f9;
+border:1px dashed #64748b;
+padding:14px;
+border-radius:10px;
+text-align:center;
+font-size:21px;
+font-weight:bold;
+letter-spacing:2px;
+}
+
+button{
+border:0;
+border-radius:10px;
+padding:12px 16px;
+font-size:15px;
+cursor:pointer;
+}
+
+.copy{
+width:100%;
+margin-top:10px;
+background:#2563eb;
+color:white;
+}
+
+.share{
+width:100%;
+margin-top:8px;
+background:#16a34a;
+color:white;
+}
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.stat{
+background:#f8fafc;
+padding:15px;
+border-radius:12px;
+text-align:center;
+}
+
+.stat strong{
+display:block;
+font-size:24px;
+margin-top:5px;
+}
+
+.money{
+font-size:28px;
+font-weight:bold;
+}
+
+.progress{
+height:14px;
+background:#e5e7eb;
+border-radius:20px;
+overflow:hidden;
+margin:12px 0;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#2563eb;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:11px 0;
+border-bottom:1px solid #eee;
+}
+
+.row:last-child{
+border-bottom:0;
+}
+
+.note{
+background:#eff6ff;
+padding:12px;
+border-radius:10px;
+line-height:1.6;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h2>🎁 Referral Center</h2>
+<div>বন্ধুকে রেফার করুন এবং বোনাস উপার্জন করুন</div>
+</div>
+
+<div class="card">
+
+<div class="title">
+Referral Bonus Balance
+</div>
+
+<div class="money">
+৳<span id="balance">0</span>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+আপনার Referral Code
+</div>
+
+<div class="refcode" id="refCode">
+REF123456
+</div>
+
+<button class="copy" onclick="copyCode()">
+📋 Copy Referral Code
+</button>
+
+<button class="share" onclick="shareReferral()">
+📤 Invite / Share
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+💰 Referral Bonus Rules
+</div>
+
+<div class="row">
+<span>Package Price</span>
+<strong>৳৬,০০০</strong>
+</div>
+
+<div class="row">
+<span>প্রতি সফল Referral</span>
+<strong>৳১,০০০</strong>
+</div>
+
+<div class="row">
+<span>২০টি Referral Bonus</span>
+<strong>৳২০,০০০</strong>
+</div>
+
+<div class="row">
+<span>২০ Referral Milestone Bonus</span>
+<strong>৳৪০,০০০</strong>
+</div>
+
+<div class="row">
+<span>২০টি Referral-এ মোট</span>
+<strong>৳৬০,০০০</strong>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+📊 Referral Statistics
+</div>
+
+<div class="stats">
+
+<div class="stat">
+সফল Referral
+<strong id="successful">0</strong>
+</div>
+
+<div class="stat">
+Pending
+<strong id="pending">0</strong>
+</div>
+
+</div>
+
+<p>২০টি সফল Referral-এর লক্ষ্য</p>
+
+<div class="progress">
+<div class="progress-bar" id="progress"></div>
+</div>
+
+<div style="text-align:center">
+<strong id="progressText">0 / 20</strong>
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+📌 কীভাবে Bonus পাবেন?
+</div>
+
+<div class="note">
+
+১️⃣ আপনার Referral Code/Link দিয়ে নতুন ইউজার রেজিস্ট্রেশন করবে।
+
+<br><br>
+
+২️⃣ ওই ইউজার ৳৬,০০০ টাকার Package কিনবে।
+
+<br><br>
+
+৩️⃣ Payment সফলভাবে যাচাই হলে Referral সফল হিসেবে গণনা হবে।
+
+<br><br>
+
+৪️⃣ প্রতি সফল Referral-এর জন্য ৳১,০০০ Bonus প্রযোজ্য হবে।
+
+<br><br>
+
+৫️⃣ ২০টি সফল Referral পূর্ণ হলে অতিরিক্ত ৳৪০,০০০ Milestone Bonus যোগ হবে।
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="title">
+📜 Referral History
+</div>
+
+<div id="history">
+
+<div style="text-align:center;color:#777;padding:15px">
+এখনো কোনো Referral নেই
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let referralCode = "REF123456";
+
+let successful = 0;
+
+let pending = 0;
+
+let balance = 0;
+
+document.getElementById("refCode").innerText =
+referralCode;
+
+
+function copyCode(){
+
+navigator.clipboard.writeText(referralCode);
+
+alert("Referral Code কপি হয়েছে!");
+
+}
+
+
+function shareReferral(){
+
+const link =
+window.location.origin +
+window.location.pathname +
+"?ref=" +
+referralCode;
+
+const text =
+"আমার Referral Link দিয়ে Join করুন:\n" +
+link;
+
+if(navigator.share){
+
+navigator.share({
+
+title:"Referral Invite",
+
+text:text,
+
+url:link
+
+});
+
+}else{
+
+navigator.clipboard.writeText(link);
+
+alert("Referral Link কপি হয়েছে!");
+
+}
+
+}
+
+
+function updateReferral(){
+
+document.getElementById("successful").innerText =
+successful;
+
+document.getElementById("pending").innerText =
+pending;
+
+document.getElementById("balance").innerText =
+balance.toLocaleString("bn-BD");
+
+let percent =
+Math.min((successful / 20) * 100,100);
+
+document.getElementById("progress").style.width =
+percent + "%";
+
+document.getElementById("progressText").innerText =
+successful + " / 20";
+
+}
+
+updateReferral();
+
+</script>
+
+</body>
+</html>
