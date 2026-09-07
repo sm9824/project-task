@@ -16,7 +16,7 @@ font-family:Arial,sans-serif;
 body{
 min-height:100vh;
 background:linear-gradient(135deg,#0f172a,#2563eb);
-padding:20px 15px;
+padding:20px 15px 30px;
 }
 
 .container{
@@ -35,29 +35,14 @@ margin-bottom:20px;
 .box{
 background:white;
 border-radius:18px;
-padding:25px;
+padding:24px;
 box-shadow:0 8px 25px rgba(0,0,0,.20);
-}
-
-.selected{
-text-align:center;
-font-size:21px;
-font-weight:bold;
-margin-bottom:10px;
-}
-
-.amount{
-text-align:center;
-font-size:32px;
-font-weight:bold;
-color:#2563eb;
-margin-bottom:25px;
 }
 
 label{
 display:block;
 font-weight:bold;
-margin-bottom:7px;
+margin:15px 0 7px;
 }
 
 select,
@@ -66,13 +51,62 @@ width:100%;
 padding:13px;
 border:1px solid #cbd5e1;
 border-radius:10px;
-margin-bottom:16px;
 font-size:16px;
+}
+
+.package-info{
+background:#eff6ff;
+padding:15px;
+border-radius:12px;
+text-align:center;
+margin-bottom:15px;
+}
+
+.package-name{
+font-size:20px;
+font-weight:bold;
+}
+
+.amount{
+font-size:30px;
+font-weight:bold;
+color:#2563eb;
+margin-top:5px;
+}
+
+.nagad-box{
+background:#f1f5f9;
+border-radius:12px;
+padding:15px;
+margin-top:18px;
+text-align:center;
+}
+
+.nagad-title{
+font-weight:bold;
+margin-bottom:8px;
+}
+
+.nagad-number{
+font-size:24px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.copy-btn{
+border:0;
+border-radius:8px;
+padding:9px 18px;
+background:#475569;
+color:white;
+font-weight:bold;
+cursor:pointer;
 }
 
 .submit{
 width:100%;
 padding:14px;
+margin-top:22px;
 border:0;
 border-radius:10px;
 background:#2563eb;
@@ -91,6 +125,7 @@ cursor:not-allowed;
 margin-top:15px;
 text-align:center;
 font-weight:bold;
+line-height:1.5;
 }
 
 .back{
@@ -100,6 +135,12 @@ color:white;
 text-decoration:none;
 font-weight:bold;
 margin-top:20px;
+}
+
+.note{
+font-size:13px;
+color:#64748b;
+margin-top:7px;
 }
 </style>
 </head>
@@ -114,38 +155,106 @@ margin-top:20px;
 
 <div class="box">
 
-<div class="selected" id="packageName">
-Package
+<label>Select Package</label>
+
+<select id="packageSelect">
+
+<option value="">Select Package</option>
+
+<option value="1" data-amount="1000">
+Package 1 — ৳1,000
+</option>
+
+<option value="2" data-amount="5000">
+Package 2 — ৳5,000
+</option>
+
+<option value="3" data-amount="6000">
+Package 3 — ৳6,000
+</option>
+
+<option value="4" data-amount="10000">
+Package 4 — ৳10,000
+</option>
+
+<option value="5" data-amount="15000">
+Package 5 — ৳15,000
+</option>
+
+<option value="6" data-amount="16000">
+Package 6 — ৳16,000
+</option>
+
+<option value="7" data-amount="20000">
+Package 7 — ৳20,000
+</option>
+
+<option value="8" data-amount="25000">
+Package 8 — ৳25,000
+</option>
+
+<option value="9" data-amount="30000">
+Package 9 — ৳30,000
+</option>
+
+<option value="10" data-amount="50000">
+Package 10 — ৳50,000
+</option>
+
+</select>
+
+
+<div class="package-info">
+
+<div class="package-name" id="packageName">
+No Package Selected
 </div>
 
 <div class="amount" id="amountText">
 ৳0
 </div>
 
-<label>Payment Method</label>
+</div>
 
-<select id="method">
-<option value="">Select Method</option>
-<option value="bKash">bKash</option>
-<option value="Nagad">Nagad</option>
-<option value="Bank">Bank</option>
-</select>
 
-<label>Sender Number / Account</label>
+<div class="nagad-box">
+
+<div class="nagad-title">
+Nagad Payment
+</div>
+
+<div class="nagad-number" id="nagadNumber">
+01XXXXXXXXX
+</div>
+
+<button class="copy-btn" id="copyBtn">
+COPY NUMBER
+</button>
+
+<p class="note">
+Payment Type: <b>Send Money</b>
+</p>
+
+</div>
+
+
+<label>Sender Nagad Number</label>
 
 <input
 type="text"
 id="sender"
-placeholder="Enter sender number/account"
+placeholder="যে Nagad নম্বর থেকে টাকা পাঠিয়েছেন"
 >
+
 
 <label>Transaction ID</label>
 
 <input
 type="text"
 id="transactionId"
-placeholder="Enter transaction ID"
+placeholder="Enter Transaction ID"
 >
+
 
 <button class="submit" id="submitBtn">
 SUBMIT PAYMENT
@@ -155,9 +264,13 @@ SUBMIT PAYMENT
 
 </div>
 
-<a class="back" href="package.html">← Back to Packages</a>
+
+<a class="back" href="dashboard.html">
+← Back to Dashboard
+</a>
 
 </div>
+
 
 <script type="module">
 
@@ -182,28 +295,50 @@ from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 const firebaseConfig = {
-apiKey: "AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
-authDomain: "project-task-79e5b.firebaseapp.com",
-projectId: "project-task-79e5b",
-storageBucket: "project-task-79e5b.firebasestorage.app",
-messagingSenderId: "5023785342",
-appId: "1:5023785342:web:570310574c26d18dec532f",
-measurementId: "G-77ZCVG3M0L"
+
+apiKey:
+"AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+
+authDomain:
+"project-task-79e5b.firebaseapp.com",
+
+projectId:
+"project-task-79e5b",
+
+storageBucket:
+"project-task-79e5b.firebasestorage.app",
+
+messagingSenderId:
+"5023785342",
+
+appId:
+"1:5023785342:web:570310574c26d18dec532f",
+
+measurementId:
+"G-77ZCVG3M0L"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+
+/* =========================
+   NAGAD NUMBER
+   ========================= */
+
+const NAGAD_NUMBER = "01XXXXXXXXX";
 
 
-const params = new URLSearchParams(window.location.search);
+const app =
+initializeApp(firebaseConfig);
 
-const packageNumber =
-parseInt(params.get("package") || "0");
+const auth =
+getAuth(app);
 
-const amount =
-parseInt(params.get("amount") || "0");
+const db =
+getFirestore(app);
 
+
+const packageSelect =
+document.getElementById("packageSelect");
 
 const packageName =
 document.getElementById("packageName");
@@ -211,34 +346,160 @@ document.getElementById("packageName");
 const amountText =
 document.getElementById("amountText");
 
+const nagadNumber =
+document.getElementById("nagadNumber");
+
+const copyBtn =
+document.getElementById("copyBtn");
+
 const submitBtn =
 document.getElementById("submitBtn");
 
 const message =
 document.getElementById("message");
 
+const senderInput =
+document.getElementById("sender");
 
-if(!packageNumber || !amount){
+const transactionInput =
+document.getElementById("transactionId");
 
-packageName.textContent = "No Package Selected";
-amountText.textContent = "৳0";
-submitBtn.disabled = true;
 
-}else{
+nagadNumber.textContent =
+NAGAD_NUMBER;
 
-packageName.textContent =
-"Package " + packageNumber;
 
-amountText.textContent =
-"৳" + amount.toLocaleString("en-US");
+/* =========================
+   PACKAGE FROM URL
+   ========================= */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const urlPackage =
+params.get("package");
+
+const urlAmount =
+params.get("amount");
+
+
+if(urlPackage && urlAmount){
+
+for(
+const option of packageSelect.options
+){
+
+if(option.value === urlPackage){
+
+option.selected = true;
+
+break;
 
 }
+
+}
+
+updatePackage();
+
+}
+
+
+/* =========================
+   PACKAGE SELECT
+   ========================= */
+
+packageSelect.addEventListener(
+"change",
+updatePackage
+);
+
+
+function updatePackage(){
+
+const option =
+packageSelect.options[
+packageSelect.selectedIndex
+];
+
+
+if(!option.value){
+
+packageName.textContent =
+"No Package Selected";
+
+amountText.textContent =
+"৳0";
+
+return;
+
+}
+
+
+const amount =
+Number(option.dataset.amount);
+
+
+packageName.textContent =
+"Package " + option.value;
+
+
+amountText.textContent =
+"৳" +
+amount.toLocaleString("en-US");
+
+}
+
+
+/* =========================
+   COPY NUMBER
+   ========================= */
+
+copyBtn.addEventListener(
+"click",
+async()=>{
+
+try{
+
+await navigator.clipboard.writeText(
+NAGAD_NUMBER
+);
+
+copyBtn.textContent =
+"COPIED ✓";
+
+
+setTimeout(()=>{
+
+copyBtn.textContent =
+"COPY NUMBER";
+
+},2000);
+
+
+}catch(error){
+
+alert(
+"Nagad Number: " +
+NAGAD_NUMBER
+);
+
+}
+
+});
 
 
 let currentUser = null;
 
 
-onAuthStateChanged(auth,(user)=>{
+/* =========================
+   AUTH
+   ========================= */
+
+onAuthStateChanged(
+auth,
+(user)=>{
 
 if(!user){
 
@@ -251,10 +512,17 @@ return;
 
 currentUser = user;
 
-});
+}
+);
 
 
-submitBtn.addEventListener("click",async()=>{
+/* =========================
+   SUBMIT PAYMENT
+   ========================= */
+
+submitBtn.addEventListener(
+"click",
+async()=>{
 
 if(!currentUser){
 
@@ -266,17 +534,13 @@ return;
 }
 
 
-const method =
-document.getElementById("method").value.trim();
-
-const sender =
-document.getElementById("sender").value.trim();
-
-const transactionId =
-document.getElementById("transactionId").value.trim();
+const option =
+packageSelect.options[
+packageSelect.selectedIndex
+];
 
 
-if(!packageNumber || !amount){
+if(!option.value){
 
 message.textContent =
 "Please select a package.";
@@ -286,20 +550,24 @@ return;
 }
 
 
-if(!method){
+const packageNumber =
+Number(option.value);
 
-message.textContent =
-"Please select payment method.";
+const amount =
+Number(option.dataset.amount);
 
-return;
 
-}
+const sender =
+senderInput.value.trim();
+
+const transactionId =
+transactionInput.value.trim();
 
 
 if(!sender){
 
 message.textContent =
-"Please enter sender number/account.";
+"Sender Nagad Number দিন।";
 
 return;
 
@@ -309,7 +577,7 @@ return;
 if(!transactionId){
 
 message.textContent =
-"Please enter transaction ID.";
+"Transaction ID দিন।";
 
 return;
 
@@ -325,19 +593,32 @@ message.textContent =
 try{
 
 
+/* =========================
+   DUPLICATE TRANSACTION
+   ========================= */
+
 const paymentRef =
-collection(db,"payments");
+collection(
+db,
+"payments"
+);
 
 
 const duplicateQuery =
 query(
 paymentRef,
-where("transactionId","==",transactionId)
+where(
+"transactionId",
+"==",
+transactionId
+)
 );
 
 
 const duplicateSnapshot =
-await getDocs(duplicateQuery);
+await getDocs(
+duplicateQuery
+);
 
 
 if(!duplicateSnapshot.empty){
@@ -352,9 +633,16 @@ return;
 }
 
 
-await addDoc(paymentRef,{
+/* =========================
+   SAVE PAYMENT
+   ========================= */
 
-userId: currentUser.uid,
+await addDoc(
+paymentRef,
+{
+
+userId:
+currentUser.uid,
 
 userEmail:
 currentUser.email || "",
@@ -366,7 +654,13 @@ amount:
 amount,
 
 method:
-method,
+"Nagad",
+
+paymentType:
+"Send Money",
+
+nagadNumber:
+NAGAD_NUMBER,
 
 sender:
 sender,
@@ -380,11 +674,12 @@ status:
 createdAt:
 new Date().toISOString()
 
-});
+}
+);
 
 
 message.textContent =
-"Payment submitted successfully. Waiting for admin approval.";
+"Payment submitted successfully. Admin approval pending.";
 
 submitBtn.disabled = true;
 
@@ -394,7 +689,8 @@ submitBtn.disabled = true;
 console.error(error);
 
 message.textContent =
-"Payment failed: " + error.message;
+"Payment failed: " +
+error.message;
 
 submitBtn.disabled = false;
 
