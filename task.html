@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PROJECT TASK - Task</title>
+
+<style>
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(135deg,#0f172a,#2563eb);
+padding:20px 15px 30px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+}
+
+.header{
+color:white;
+text-align:center;
+font-size:30px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+border-radius:18px;
+padding:20px;
+margin-bottom:15px;
+box-shadow:0 8px 25px rgba(0,0,0,.20);
+}
+
+.task-title{
+font-size:21px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.task-info{
+color:#475569;
+line-height:1.7;
+margin-bottom:15px;
+}
+
+.video{
+width:100%;
+aspect-ratio:16/9;
+border:0;
+border-radius:12px;
+margin-bottom:15px;
+background:#000;
+}
+
+.complete-btn{
+width:100%;
+padding:13px;
+border:0;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.complete-btn:disabled{
+background:#94a3b8;
+cursor:not-allowed;
+}
+
+.status{
+margin-top:12px;
+font-weight:bold;
+text-align:center;
+}
+
+.empty{
+text-align:center;
+color:#64748b;
+padding:20px 5px;
+}
+
+.summary{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:15px;
+}
+
+.summary-box{
+background:#f8fafc;
+border-radius:12px;
+padding:14px;
+text-align:center;
+}
+
+.summary-label{
+font-size:13px;
+color:#64748b;
+}
+
+.summary-value{
+font-size:21px;
+font-weight:bold;
+margin-top:5px;
+}
+
+.back{
+display:block;
+text-align:center;
+color:white;
+text-decoration:none;
+font-weight:bold;
+margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+📋 TASK
+</div>
+
+<div class="card">
+
+<div class="summary">
+
+<div class="summary-box">
+<div class="summary-label">
+Available Tasks
+</div>
+
+<div class="summary-value" id="taskCount">
+0
+</div>
+</div>
+
+
+<div class="summary-box">
+<div class="summary-label">
+Pending Income
+</div>
+
+<div class="summary-value" id="pendingIncome">
+৳0
+</div>
+</div>
+
+</div>
+
+<div id="taskList">
+
+<div class="empty">
+Loading tasks...
+</div>
+
+</div>
+
+</div>
+
+
+<a class="back" href="dashboard.html">
+← Back to Dashboard
+</a>
+
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+getFirestore,
+collection,
+query,
+where,
+orderBy,
+getDocs,
+doc,
+getDoc,
+addDoc
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+
+authDomain:
+"project-task-79e5b.firebaseapp.com",
+
+projectId:
+"project-task-79e5b",
+
+storageBucket:
+"project-task-79e5b.firebasestorage.app",
+
+messagingSenderId:
+"5023785342",
+
+appId:
+"1:5023785342:web:570310574c26d18dec532f",
+
+measurementId:
+"G-77ZCVG3M0L"
+
+};
+
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
+
+
+const taskList =
+document.getElementById("taskList");
+
+const taskCount =
+document.getElementById("taskCount");
+
+const pendingIncome =
+document.getElementById("pendingIncome");
+
+
+let currentUser = null;
+
+
+/* =========================
+   AUTH
+   ========================= */
+
+onAuthStateChanged(
+auth,
+async(user)=>{
+
+if(!user){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+currentUser = user;
+
+await loadTasks();
+
+}
+);
+
+
+/* =========================
+   LOAD TASKS
+   ========================= */
+
+async function loadTasks(){
+
+taskList.innerHTML =
+'<div class="empty">Loading tasks...</div>';
+
+try{
+
+const userRef =
+doc(
+db,
+"users",
+currentUser.uid
+);
+
+const userSnap =
+await getDoc(userRef);
+
+
+if(!userSnap.exists()){
+
+taskList.innerHTML =
+'<div class="empty">User information not found.</div>';
+
+return;
+
+}
+
+
+/*
+  Active package is only displayed
+  as user information.
+  Task payment itself comes from
+  the Admin-created task.
+*/
+
+const userData =
+userSnap.data();
+
+
+const activePackage =
+userData.packageStatus === "active";
+
+
+if(!activePackage){
+
+taskList.innerHTML =
+'<div class="empty">Your account does not have an active package.</div>';
+
+taskCount.textContent =
+"0";
+
+return;
+
+}
+
+
+/* =========================
+   GET AVAILABLE TASKS
+   ========================= */
+
+const tasksQuery =
+query(
+collection(db,"tasks"),
+where("active","==",true),
+orderBy("createdAt","desc")
+);
+
+
+const taskSnapshot =
+await getDocs(tasksQuery);
+
+
+/* =========================
+   GET USER SUBMISSIONS
+   ========================= */
+
+const submissionsQuery =
+query(
+collection(db,"taskSubmissions"),
+where("userId","==",currentUser.uid)
+);
+
+
+const submissionSnapshot =
+await getDocs(submissionsQuery);
+
+
+const completedTaskIds =
+new Set();
+
+
+let pendingTotal = 0;
+
+
+submissionSnapshot.forEach(
+(docSnap)=>{
+
+const data =
+docSnap.data();
+
+
+if(
+data.status === "pending"
+){
+
+pendingTotal +=
+Number(data.amount || 0);
+
+}
+
+
+if(
+data.taskId
+){
+
+completedTaskIds.add(
+data.taskId
+);
+
+}
+
+});
+
+
+pendingIncome.textContent =
+"৳" +
+pendingTotal.toLocaleString("en-US");
+
+
+/* =========================
+   DISPLAY TASKS
+   ========================= */
+
+let availableTasks = 0;
+
+taskList.innerHTML = "";
+
+
+taskSnapshot.forEach(
+(taskDoc)=>{
+
+const task =
+taskDoc.data();
+
+const taskId =
+taskDoc.id;
+
+
+if(
+completedTaskIds.has(taskId)
+){
+
+return;
+
+}
+
+
+availableTasks++;
+
+
+const card =
+document.createElement("div");
+
+card.className =
+"card";
+
+
+const title =
+document.createElement("div");
+
+title.className =
+"task-title";
+
+title.textContent =
+task.title ||
+"Video Task";
+
+
+const info =
+document.createElement("div");
+
+info.className =
+"task-info";
+
+
+info.innerHTML = `
+<b>Payment:</b>
+৳${Number(task.amount || 0).toLocaleString("en-US")}
+<br>
+<b>Instructions:</b>
+${escapeHtml(task.description || "Complete the video task.")}
+`;
+
+
+card.appendChild(title);
+
+card.appendChild(info);
+
+
+/* =========================
+   VIDEO
+   ========================= */
+
+if(task.videoUrl){
+
+const video =
+document.createElement("iframe");
+
+video.className =
+"video";
+
+video.src =
+task.videoUrl;
+
+video.allow =
+"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+
+video.allowFullscreen =
+true;
+
+card.appendChild(video);
+
+}
+
+
+/* =========================
+   COMPLETE BUTTON
+   ========================= */
+
+const button =
+document.createElement("button");
+
+button.className =
+"complete-btn";
+
+button.textContent =
+"COMPLETE TASK";
+
+
+const status =
+document.createElement("div");
+
+status.className =
+"status";
+
+
+button.addEventListener(
+"click",
+async()=>{
+
+button.disabled =
+true;
+
+button.textContent =
+"Submitting...";
+
+status.textContent =
+"";
+
+
+try{
+
+/*
+  Create a task submission.
+  Income becomes pending for
+  24 hours.
+*/
+
+const completedAt =
+new Date();
+
+const availableAt =
+new Date(
+completedAt.getTime()
++
+24 * 60 * 60 * 1000
+);
+
+
+await addDoc(
+collection(
+db,
+"taskSubmissions"
+),
+{
+
+taskId:
+taskId,
+
+userId:
+currentUser.uid,
+
+userEmail:
+currentUser.email || "",
+
+title:
+task.title || "Video Task",
+
+amount:
+Number(task.amount || 0),
+
+status:
+"pending",
+
+completedAt:
+completedAt.toISOString(),
+
+availableAt:
+availableAt.toISOString(),
+
+createdAt:
+completedAt.toISOString()
+
+}
+);
+
+
+status.style.color =
+"#16a34a";
+
+status.textContent =
+"Task completed. Income will become available after 24 hours.";
+
+button.textContent =
+"COMPLETED";
+
+
+}catch(error){
+
+console.error(error);
+
+status.style.color =
+"#dc2626";
+
+status.textContent =
+"Failed: " +
+error.message;
+
+button.disabled =
+false;
+
+button.textContent =
+"COMPLETE TASK";
+
+}
+
+});
+
+
+card.appendChild(button);
+
+card.appendChild(status);
+
+taskList.appendChild(card);
+
+});
+
+
+taskCount.textContent =
+availableTasks;
+
+
+if(availableTasks === 0){
+
+taskList.innerHTML =
+'<div class="empty">No new tasks available right now.</div>';
+
+}
+
+
+}catch(error){
+
+console.error(error);
+
+taskList.innerHTML =
+`
+<div class="empty">
+Unable to load tasks.<br><br>
+${escapeHtml(error.message)}
+</div>
+`;
+
+}
+
+}
+
+
+/* =========================
+   HTML ESCAPE
+   ========================= */
+
+function escapeHtml(value){
+
+return String(value)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+</script>
+
+</body>
+</html>
