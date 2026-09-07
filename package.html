@@ -1,204 +1,159 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Package - PROJECT TASK</title>
+<title>PROJECT TASK - Packages</title>
 
 <style>
 *{
-    box-sizing:border-box;
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
 }
 
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f4f7fb;
-    color:#222;
-}
-
-.container{
-    width:92%;
-    max-width:650px;
-    margin:25px auto;
+min-height:100vh;
+background:linear-gradient(135deg,#0f172a,#2563eb);
+padding:20px 15px 30px;
 }
 
 .header{
-    background:#111827;
-    color:white;
-    padding:25px;
-    border-radius:15px;
-    text-align:center;
+text-align:center;
+color:white;
+font-size:28px;
+font-weight:bold;
+margin-bottom:20px;
 }
 
-.header h1{
-    margin:0 0 8px;
-}
-
-.card{
-    background:white;
-    margin-top:18px;
-    padding:22px;
-    border-radius:15px;
-    box-shadow:0 4px 15px rgba(0,0,0,.08);
+.container{
+max-width:600px;
+margin:auto;
 }
 
 .package{
-    text-align:center;
+background:white;
+border-radius:18px;
+padding:22px;
+margin-bottom:15px;
+box-shadow:0 8px 25px rgba(0,0,0,.20);
+text-align:center;
+}
+
+.package h2{
+font-size:22px;
+margin-bottom:10px;
+color:#1e293b;
 }
 
 .price{
-    font-size:38px;
-    font-weight:bold;
-    margin:15px 0;
+font-size:30px;
+font-weight:bold;
+color:#2563eb;
+margin-bottom:15px;
 }
 
-.feature{
-    padding:10px;
-    border-bottom:1px solid #eee;
+.buy{
+display:block;
+width:100%;
+padding:13px;
+border:0;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:17px;
+font-weight:bold;
+text-decoration:none;
+cursor:pointer;
 }
 
-button{
-    width:100%;
-    margin-top:18px;
-    padding:14px;
-    border:0;
-    border-radius:10px;
-    background:#111827;
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
+.buy:active{
+transform:scale(.97);
 }
 
-.status{
-    text-align:center;
-    font-weight:bold;
-    margin-top:12px;
+.back{
+display:block;
+text-align:center;
+color:white;
+text-decoration:none;
+font-weight:bold;
+margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-    <div class="header">
-        <h1>📦 PROJECT TASK</h1>
-        <p>Package Management</p>
-    </div>
-
-    <div class="card package">
-
-        <h2>PROJECT TASK Package</h2>
-
-        <div class="price">৳৬,০০০</div>
-
-        <div class="feature">✅ Package Access</div>
-        <div class="feature">✅ Task Access</div>
-        <div class="feature">✅ Referral System</div>
-        <div class="feature">✅ Commission System</div>
-        <div class="feature">✅ Income Dashboard</div>
-
-        <button onclick="buyPackage()">
-            📦 Buy Package
-        </button>
-
-        <div id="status" class="status"></div>
-
-    </div>
-
+<div class="header">
+📦 PACKAGE
 </div>
 
+<div class="container">
 
-<script type="module">
+<div class="package">
+<h2>Package 1</h2>
+<div class="price">৳1,000</div>
+<a class="buy" href="payment.html?package=1&amount=1000">BUY NOW</a>
+</div>
 
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+<div class="package">
+<h2>Package 2</h2>
+<div class="price">৳5,000</div>
+<a class="buy" href="payment.html?package=2&amount=5000">BUY NOW</a>
+</div>
 
-import {
-    getAuth,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+<div class="package">
+<h2>Package 3</h2>
+<div class="price">৳6,000</div>
+<a class="buy" href="payment.html?package=3&amount=6000">BUY NOW</a>
+</div>
 
-import {
-    getFirestore,
-    doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+<div class="package">
+<h2>Package 4</h2>
+<div class="price">৳10,000</div>
+<a class="buy" href="payment.html?package=4&amount=10000">BUY NOW</a>
+</div>
 
+<div class="package">
+<h2>Package 5</h2>
+<div class="price">৳15,000</div>
+<a class="buy" href="payment.html?package=5&amount=15000">BUY NOW</a>
+</div>
 
-const firebaseConfig = {
-    apiKey:"AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
-    authDomain:"project-task-79e5b.firebaseapp.com",
-    projectId:"project-task-79e5b",
-    storageBucket:"project-task-79e5b.firebasestorage.app",
-    messagingSenderId:"5023785342",
-    appId:"1:5023785342:web:570310574c26d18dec532f",
-    measurementId:"G-77ZCVG3M0L"
-};
+<div class="package">
+<h2>Package 6</h2>
+<div class="price">৳16,000</div>
+<a class="buy" href="payment.html?package=6&amount=16000">BUY NOW</a>
+</div>
 
+<div class="package">
+<h2>Package 7</h2>
+<div class="price">৳20,000</div>
+<a class="buy" href="payment.html?package=7&amount=20000">BUY NOW</a>
+</div>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+<div class="package">
+<h2>Package 8</h2>
+<div class="price">৳25,000</div>
+<a class="buy" href="payment.html?package=8&amount=25000">BUY NOW</a>
+</div>
 
-let currentUser = null;
+<div class="package">
+<h2>Package 9</h2>
+<div class="price">৳30,000</div>
+<a class="buy" href="payment.html?package=9&amount=30000">BUY NOW</a>
+</div>
 
+<div class="package">
+<h2>Package 10</h2>
+<div class="price">৳50,000</div>
+<a class="buy" href="payment.html?package=10&amount=50000">BUY NOW</a>
+</div>
 
-onAuthStateChanged(auth, async user => {
+<a class="back" href="dashboard.html">← Back to Dashboard</a>
 
-    if(!user){
-        window.location.href="login.html";
-        return;
-    }
-
-    currentUser = user;
-
-    try{
-
-        const snap = await getDoc(
-            doc(db,"users",user.uid)
-        );
-
-        if(snap.exists()){
-
-            const data = snap.data();
-
-            if(data.packageStatus === "active"){
-
-                document.getElementById("status").textContent =
-                    "✅ আপনার Package Active আছে।";
-
-                document.querySelector("button").textContent =
-                    "💳 Payment Page";
-
-            }
-
-        }
-
-    }catch(error){
-
-        console.error(error);
-
-    }
-
-});
-
-
-window.buyPackage = function(){
-
-    if(!currentUser){
-        return;
-    }
-
-    window.location.href="payment.html";
-
-};
-
-</script>
+</div>
 
 </body>
 </html>
