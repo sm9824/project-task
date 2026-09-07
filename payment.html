@@ -1,81 +1,105 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Package - PROJECT TASK</title>
+<title>PROJECT TASK - Payment</title>
 
 <style>
 *{
-    box-sizing:border-box;
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
 }
 
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f4f7fb;
-    color:#222;
+min-height:100vh;
+background:linear-gradient(135deg,#0f172a,#2563eb);
+padding:20px 15px;
 }
 
 .container{
-    width:92%;
-    max-width:650px;
-    margin:25px auto;
+max-width:500px;
+margin:auto;
 }
 
 .header{
-    background:#111827;
-    color:white;
-    padding:25px;
-    border-radius:15px;
-    text-align:center;
+text-align:center;
+color:white;
+font-size:28px;
+font-weight:bold;
+margin-bottom:20px;
 }
 
-.header h1{
-    margin:0 0 8px;
+.box{
+background:white;
+border-radius:18px;
+padding:25px;
+box-shadow:0 8px 25px rgba(0,0,0,.20);
 }
 
-.card{
-    background:white;
-    margin-top:18px;
-    padding:22px;
-    border-radius:15px;
-    box-shadow:0 4px 15px rgba(0,0,0,.08);
+.selected{
+text-align:center;
+font-size:21px;
+font-weight:bold;
+margin-bottom:10px;
 }
 
-.package{
-    text-align:center;
+.amount{
+text-align:center;
+font-size:32px;
+font-weight:bold;
+color:#2563eb;
+margin-bottom:25px;
 }
 
-.price{
-    font-size:38px;
-    font-weight:bold;
-    margin:15px 0;
+label{
+display:block;
+font-weight:bold;
+margin-bottom:7px;
 }
 
-.feature{
-    padding:10px;
-    border-bottom:1px solid #eee;
+select,
+input{
+width:100%;
+padding:13px;
+border:1px solid #cbd5e1;
+border-radius:10px;
+margin-bottom:16px;
+font-size:16px;
 }
 
-button{
-    width:100%;
-    margin-top:18px;
-    padding:14px;
-    border:0;
-    border-radius:10px;
-    background:#111827;
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
+.submit{
+width:100%;
+padding:14px;
+border:0;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
 }
 
-.status{
-    text-align:center;
-    font-weight:bold;
-    margin-top:12px;
+.submit:disabled{
+background:#94a3b8;
+cursor:not-allowed;
+}
+
+.message{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+
+.back{
+display:block;
+text-align:center;
+color:white;
+text-decoration:none;
+font-weight:bold;
+margin-top:20px;
 }
 </style>
 </head>
@@ -84,119 +108,299 @@ button{
 
 <div class="container">
 
-    <div class="header">
-        <h1>📦 PROJECT TASK</h1>
-        <p>Package Management</p>
-    </div>
+<div class="header">
+💳 PAYMENT
+</div>
 
-    <div class="card package">
+<div class="box">
 
-        <h2>PROJECT TASK Package</h2>
+<div class="selected" id="packageName">
+Package
+</div>
 
-        <div class="price">৳৬,০০০</div>
+<div class="amount" id="amountText">
+৳0
+</div>
 
-        <div class="feature">✅ Package Access</div>
-        <div class="feature">✅ Task Access</div>
-        <div class="feature">✅ Referral System</div>
-        <div class="feature">✅ Commission System</div>
-        <div class="feature">✅ Income Dashboard</div>
+<label>Payment Method</label>
 
-        <button onclick="buyPackage()">
-            📦 Buy Package
-        </button>
+<select id="method">
+<option value="">Select Method</option>
+<option value="bKash">bKash</option>
+<option value="Nagad">Nagad</option>
+<option value="Bank">Bank</option>
+</select>
 
-        <div id="status" class="status"></div>
+<label>Sender Number / Account</label>
 
-    </div>
+<input
+type="text"
+id="sender"
+placeholder="Enter sender number/account"
+>
+
+<label>Transaction ID</label>
+
+<input
+type="text"
+id="transactionId"
+placeholder="Enter transaction ID"
+>
+
+<button class="submit" id="submitBtn">
+SUBMIT PAYMENT
+</button>
+
+<div class="message" id="message"></div>
 
 </div>
 
+<a class="back" href="package.html">← Back to Packages</a>
+
+</div>
 
 <script type="module">
 
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
-    getAuth,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
-    getFirestore,
-    doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+getFirestore,
+collection,
+addDoc,
+query,
+where,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 const firebaseConfig = {
-    apiKey:"AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
-    authDomain:"project-task-79e5b.firebaseapp.com",
-    projectId:"project-task-79e5b",
-    storageBucket:"project-task-79e5b.firebasestorage.app",
-    messagingSenderId:"5023785342",
-    appId:"1:5023785342:web:570310574c26d18dec532f",
-    measurementId:"G-77ZCVG3M0L"
+apiKey: "AIzaSyBwwSEUizTX5s_PxwQyatOk1LrDiNbaskA",
+authDomain: "project-task-79e5b.firebaseapp.com",
+projectId: "project-task-79e5b",
+storageBucket: "project-task-79e5b.firebasestorage.app",
+messagingSenderId: "5023785342",
+appId: "1:5023785342:web:570310574c26d18dec532f",
+measurementId: "G-77ZCVG3M0L"
 };
-
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+
+const params = new URLSearchParams(window.location.search);
+
+const packageNumber =
+parseInt(params.get("package") || "0");
+
+const amount =
+parseInt(params.get("amount") || "0");
+
+
+const packageName =
+document.getElementById("packageName");
+
+const amountText =
+document.getElementById("amountText");
+
+const submitBtn =
+document.getElementById("submitBtn");
+
+const message =
+document.getElementById("message");
+
+
+if(!packageNumber || !amount){
+
+packageName.textContent = "No Package Selected";
+amountText.textContent = "৳0";
+submitBtn.disabled = true;
+
+}else{
+
+packageName.textContent =
+"Package " + packageNumber;
+
+amountText.textContent =
+"৳" + amount.toLocaleString("en-US");
+
+}
+
+
 let currentUser = null;
 
 
-onAuthStateChanged(auth, async user => {
+onAuthStateChanged(auth,(user)=>{
 
-    if(!user){
-        window.location.href="login.html";
-        return;
-    }
+if(!user){
 
-    currentUser = user;
+window.location.href =
+"login.html";
 
-    try{
+return;
 
-        const snap = await getDoc(
-            doc(db,"users",user.uid)
-        );
+}
 
-        if(snap.exists()){
-
-            const data = snap.data();
-
-            if(data.packageStatus === "active"){
-
-                document.getElementById("status").textContent =
-                    "✅ আপনার Package Active আছে।";
-
-                document.querySelector("button").textContent =
-                    "💳 Payment Page";
-
-            }
-
-        }
-
-    }catch(error){
-
-        console.error(error);
-
-    }
+currentUser = user;
 
 });
 
 
-window.buyPackage = function(){
+submitBtn.addEventListener("click",async()=>{
 
-    if(!currentUser){
-        return;
-    }
+if(!currentUser){
 
-    window.location.href="payment.html";
+message.textContent =
+"Please login first.";
 
-};
+return;
+
+}
+
+
+const method =
+document.getElementById("method").value.trim();
+
+const sender =
+document.getElementById("sender").value.trim();
+
+const transactionId =
+document.getElementById("transactionId").value.trim();
+
+
+if(!packageNumber || !amount){
+
+message.textContent =
+"Please select a package.";
+
+return;
+
+}
+
+
+if(!method){
+
+message.textContent =
+"Please select payment method.";
+
+return;
+
+}
+
+
+if(!sender){
+
+message.textContent =
+"Please enter sender number/account.";
+
+return;
+
+}
+
+
+if(!transactionId){
+
+message.textContent =
+"Please enter transaction ID.";
+
+return;
+
+}
+
+
+submitBtn.disabled = true;
+
+message.textContent =
+"Checking payment...";
+
+
+try{
+
+
+const paymentRef =
+collection(db,"payments");
+
+
+const duplicateQuery =
+query(
+paymentRef,
+where("transactionId","==",transactionId)
+);
+
+
+const duplicateSnapshot =
+await getDocs(duplicateQuery);
+
+
+if(!duplicateSnapshot.empty){
+
+message.textContent =
+"This Transaction ID has already been submitted.";
+
+submitBtn.disabled = false;
+
+return;
+
+}
+
+
+await addDoc(paymentRef,{
+
+userId: currentUser.uid,
+
+userEmail:
+currentUser.email || "",
+
+packageNumber:
+packageNumber,
+
+amount:
+amount,
+
+method:
+method,
+
+sender:
+sender,
+
+transactionId:
+transactionId,
+
+status:
+"pending",
+
+createdAt:
+new Date().toISOString()
+
+});
+
+
+message.textContent =
+"Payment submitted successfully. Waiting for admin approval.";
+
+submitBtn.disabled = true;
+
+
+}catch(error){
+
+console.error(error);
+
+message.textContent =
+"Payment failed: " + error.message;
+
+submitBtn.disabled = false;
+
+}
+
+});
 
 </script>
 
